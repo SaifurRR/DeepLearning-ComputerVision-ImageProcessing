@@ -13,238 +13,238 @@ from sklearn.linear_model import LogisticRegression
 
 
 def get_clouds():
-  Nclass = 500
-  D = 2
-  
-  X1 = np.random.randn(Nclass, D) + np.array([0, -2])
-  X2 = np.random.randn(Nclass, D) + np.array([2, 2])
-  X3 = np.random.randn(Nclass, D) + np.array([-2, 2])
-  X = np.vstack([X1, X2, X3])
-  
-  Y = np.array([0]*Nclass + [1]*Nclass + [2]*Nclass)
-  return X, Y
+    Nclass = 500
+    D = 2
+
+    X1 = np.random.randn(Nclass, D) + np.array([0, -2])
+    X2 = np.random.randn(Nclass, D) + np.array([2, 2])
+    X3 = np.random.randn(Nclass, D) + np.array([-2, 2])
+    X = np.vstack([X1, X2, X3])
+
+    Y = np.array([0]*Nclass + [1]*Nclass + [2]*Nclass)
+    return X, Y
 
 
 def get_spiral():
-  # Idea: radius -> low...high
-  #           (don't start at 0, otherwise points will be "mushed" at origin)
-  #       angle = low...high proportional to radius
-  #               [0, 2pi/6, 4pi/6, ..., 10pi/6] --> [pi/2, pi/3 + pi/2, ...,]
-  # x = rcos(theta), y = rsin(theta) as usual
+    # Idea: radius -> low...high
+    #           (don't start at 0, otherwise points will be "mushed" at origin)
+    #       angle = low...high proportional to radius
+    #               [0, 2pi/6, 4pi/6, ..., 10pi/6] --> [pi/2, pi/3 + pi/2, ...,]
+    # x = rcos(theta), y = rsin(theta) as usual
 
-  radius = np.linspace(1, 10, 100)
-  thetas = np.empty((6, 100))
-  for i in range(6):
-      start_angle = np.pi*i / 3.0
-      end_angle = start_angle + np.pi / 2
-      points = np.linspace(start_angle, end_angle, 100)
-      thetas[i] = points
+    radius = np.linspace(1, 10, 100)
+    thetas = np.empty((6, 100))
+    for i in range(6):
+        start_angle = np.pi*i / 3.0
+        end_angle = start_angle + np.pi / 2
+        points = np.linspace(start_angle, end_angle, 100)
+        thetas[i] = points
 
-  # convert into cartesian coordinates
-  x1 = np.empty((6, 100))
-  x2 = np.empty((6, 100))
-  for i in range(6):
-      x1[i] = radius * np.cos(thetas[i])
-      x2[i] = radius * np.sin(thetas[i])
+    # convert into cartesian coordinates
+    x1 = np.empty((6, 100))
+    x2 = np.empty((6, 100))
+    for i in range(6):
+        x1[i] = radius * np.cos(thetas[i])
+        x2[i] = radius * np.sin(thetas[i])
 
-  # inputs
-  X = np.empty((600, 2))
-  X[:,0] = x1.flatten()
-  X[:,1] = x2.flatten()
+    # inputs
+    X = np.empty((600, 2))
+    X[:,0] = x1.flatten()
+    X[:,1] = x2.flatten()
 
-  # add noise
-  X += np.random.randn(600, 2)*0.5
+    # add noise
+    X += np.random.randn(600, 2)*0.5
 
-  # targets
-  Y = np.array([0]*100 + [1]*100 + [0]*100 + [1]*100 + [0]*100 + [1]*100)
-  return X, Y
+    # targets
+    Y = np.array([0]*100 + [1]*100 + [0]*100 + [1]*100 + [0]*100 + [1]*100)
+    return X, Y
 
 def get_transformed_data():
-  print("Reading in and transforming data...")
+    print("Reading in and transforming data...")
 
-  if not os.path.exists('/large_files/train.csv'):
-      print('Looking for /large_files/train.csv')
-      print('You have not downloaded the data and/or not placed the files in the correct location.')
-      print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
-      print('Place train.csv in the folder large_files adjacent to the class folder')
-      exit()
+    if not os.path.exists('/large_files/train.csv'):
+        print('Looking for /large_files/train.csv')
+        print('You have not downloaded the data and/or not placed the files in the correct location.')
+        print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
+        print('Place train.csv in the folder large_files adjacent to the class folder')
+        exit()
 
-  df = pd.read_csv('/large_files/train.csv')
-  data = df.values.astype(np.float32)
-  np.random.shuffle(data) #important for train-test-split -> to randomize labels
+    df = pd.read_csv('/large_files/train.csv')
+    data = df.values.astype(np.float32)
+    np.random.shuffle(data) #important for train-test-split -> to randomize labels
 
-  X = data[:, 1:]
-  Y = data[:, 0].astype(np.int32)
+    X = data[:, 1:]
+    Y = data[:, 0].astype(np.int32)
 
-  Xtrain = X[:-1000]
-  Ytrain = Y[:-1000]
-  Xtest  = X[-1000:]
-  Ytest  = Y[-1000:]
+    Xtrain = X[:-1000]
+    Ytrain = Y[:-1000]
+    Xtest  = X[-1000:]
+    Ytest  = Y[-1000:]
 
-  # center the data
-  mu = Xtrain.mean(axis=0)
-  Xtrain = Xtrain - mu
-  Xtest  = Xtest - mu
+    # center the data
+    mu = Xtrain.mean(axis=0)
+    Xtrain = Xtrain - mu
+    Xtest  = Xtest - mu
 
-  # transform the data
-  pca = PCA()
-  Ztrain = pca.fit_transform(Xtrain)
-  Ztest  = pca.transform(Xtest)
+    # transform the data
+    pca = PCA()
+    Ztrain = pca.fit_transform(Xtrain)
+    Ztest  = pca.transform(Xtest)
 
-  plot_cumulative_variance(pca)
+    plot_cumulative_variance(pca)
 
-  # take first 300 cols of Z
-  Ztrain = Ztrain[:, :300]
-  Ztest = Ztest[:, :300]
+    # take first 300 cols of Z
+    Ztrain = Ztrain[:, :300]
+    Ztest = Ztest[:, :300]
 
-  # normalize Z
-  mu = Ztrain.mean(axis=0)
-  std = Ztrain.std(axis=0)
-  Ztrain = (Ztrain - mu) / std
-  Ztest = (Ztest - mu) / std
+    # normalize Z
+    mu = Ztrain.mean(axis=0)
+    std = Ztrain.std(axis=0)
+    Ztrain = (Ztrain - mu) / std
+    Ztest = (Ztest - mu) / std
 
-  return Ztrain, Ztest, Ytrain, Ytest
+    return Ztrain, Ztest, Ytrain, Ytest
 
 # function returns training & test dataset
 def get_normalized_data():
-  print("Reading in and transforming data...")
-  #check if file exists
-  if not os.path.exists('/content/large_files/train.csv'):
-      print('Looking for /large_files/train.csv')
-      print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
-      exit() #terminate script if file is not present
+    print("Reading in and transforming data...")
+    #check if file exists
+    if not os.path.exists('/content/large_files/train.csv'):
+        print('Looking for /large_files/train.csv')
+        print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
+        exit() #terminate script if file is not present
 
-  df = pd.read_csv('/content/large_files/train.csv')
-  data = df.values.astype(np.float32) #data flattened into 1D array
-  np.random.shuffle(data)  #important for train-test-split -> to randomize labels
+    df = pd.read_csv('/content/large_files/train.csv')
+    data = df.values.astype(np.float32) #data flattened into 1D array
+    np.random.shuffle(data)  #important for train-test-split -> to randomize labels
 
-  #split data into i/p & targets
-  X = data[:, 1:] #data: rest of the columns
-  Y = data[:, 0] #target: 1st column
+    #split data into i/p & targets
+    X = data[:, 1:] #data: rest of the columns
+    Y = data[:, 0] #target: 1st column
 
-  #split data into train & test
-  Xtrain = X[:-1000] #start: 1000
-  Ytrain = Y[:-1000]
-  Xtest  = X[-1000:] #last 1000 (validation set)
-  Ytest  = Y[-1000:]
+    #split data into train & test
+    Xtrain = X[:-1000] #start: 1000
+    Ytrain = Y[:-1000]
+    Xtest  = X[-1000:] #last 1000 (validation set)
+    Ytest  = Y[-1000:]
 
-  #normalize the data (standardization: every column: u=0, var=1)
-  mu = Xtrain.mean(axis=0) #mean along the rows
-  std = Xtrain.std(axis=0) #std along the rows
-  #replace '0' with '1'
-  np.place(std, std == 0, 1)
-  #standardization/normalization of both 'train' & 'test' set
-  Xtrain = (Xtrain - mu) / std
-  Xtest = (Xtest - mu) / std
+    #normalize the data (standardization: every column: u=0, var=1)
+    mu = Xtrain.mean(axis=0) #mean along the rows
+    std = Xtrain.std(axis=0) #std along the rows
+    #replace '0' with '1'
+    np.place(std, std == 0, 1)
+    #standardization/normalization of both 'train' & 'test' set
+    Xtrain = (Xtrain - mu) / std
+    Xtest = (Xtest - mu) / std
 
-  return Xtrain, Xtest, Ytrain, Ytest
+    return Xtrain, Xtest, Ytrain, Ytest
 
 def plot_cumulative_variance(pca):
-  P = []
-  for p in pca.explained_variance_ratio_:
-      if len(P) == 0:
-          P.append(p)
-      else:
-          P.append(p + P[-1])
-  plt.plot(P)
-  plt.show()
-  return P
+    P = []
+    for p in pca.explained_variance_ratio_:
+        if len(P) == 0:
+            P.append(p)
+        else:
+            P.append(p + P[-1])
+    plt.plot(P)
+    plt.show()
+    return P
 
 
 def forward(X, W, b):
-  # softmax
-  a = X.dot(W) + b
-  expa = np.exp(a)
-  y = expa / expa.sum(axis=1, keepdims=True)
-  return y
+    # softmax
+    a = X.dot(W) + b
+    expa = np.exp(a)
+    y = expa / expa.sum(axis=1, keepdims=True)
+    return y
 
 
 def predict(p_y):
-  return np.argmax(p_y, axis=1)
+    return np.argmax(p_y, axis=1)
 
 
 def error_rate(p_y, t):
-  prediction = predict(p_y)
-  return np.mean(prediction != t)
+    prediction = predict(p_y)
+    return np.mean(prediction != t)
 
 
 def cost(p_y, t):
-  tot = t * np.log(p_y)
-  return -tot.sum()
+    tot = t * np.log(p_y)
+    return -tot.sum()
 
 
 def gradW(t, y, X):
-  return X.T.dot(t - y)
+    return X.T.dot(t - y)
 
 
 def gradb(t, y):
-  return (t - y).sum(axis=0)
+    return (t - y).sum(axis=0)
 
 
 def y2indicator(y):
-  N = len(y) # No. of training/ test samples
-  y = y.astype(np.int32) 
-  k = y.max()+1
-  ind = np.zeros((N, k)) #matrix  of size (#of samples, #of classes)
-  for i in range(N):
-      ind[i, y[i]] = 1
-  return ind
+    N = len(y) # No. of training/ test samples
+    y = y.astype(np.int32) 
+    k = y.max()+1
+    ind = np.zeros((N, k)) #matrix  of size (#of samples, #of classes)
+    for i in range(N):
+        ind[i, y[i]] = 1 #indicator matrix have 1 corresponding to class value for each sample
+    return ind
 
 def benchmark_full():
   #load data
-  Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
-  
-  print("Performing logistic regression...")
-  # lr = LogisticRegression(solver='lbfgs')
-  
-  
-  # convert Ytrain and Ytest to (N x K) matrices of indicator variables
-  N, D = Xtrain.shape #extract N: #of samples, D: # of features
-  Ytrain_ind = y2indicator(Ytrain)
-  Ytest_ind = y2indicator(Ytest)
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
-  W = np.random.randn(D, 10) / np.sqrt(D)
-  b = np.zeros(10)
-  LL = []
-  LLtest = []
-  CRtest = []
+    print("Performing logistic regression...")
+    # lr = LogisticRegression(solver='lbfgs')
 
-  # reg = 1
-  # learning rate 0.0001 is too high, 0.00005 is also too high
-  # 0.00003 / 2000 iterations => 0.363 error, -7630 cost
-  # 0.00004 / 1000 iterations => 0.295 error, -7902 cost
-  # 0.00004 / 2000 iterations => 0.321 error, -7528 cost
 
-  # reg = 0.1, still around 0.31 error
-  # reg = 0.01, still around 0.31 error
-  lr = 0.00004
-  reg = 0.01
-  for i in range(500):
-      p_y = forward(Xtrain, W, b)
-      # print "p_y:", p_y
-      ll = cost(p_y, Ytrain_ind)
-      LL.append(ll)
+    # convert Ytrain and Ytest to (N x K) matrices of indicator variables
+    N, D = Xtrain.shape #extract N: #of samples, D: # of features
+    Ytrain_ind = y2indicator(Ytrain) #
+    Ytest_ind = y2indicator(Ytest)
 
-      p_y_test = forward(Xtest, W, b)
-      lltest = cost(p_y_test, Ytest_ind)
-      LLtest.append(lltest)
+    W = np.random.randn(D, 10) / np.sqrt(D)
+    b = np.zeros(10)
+    LL = []
+    LLtest = []
+    CRtest = []
 
-      err = error_rate(p_y_test, Ytest)
-      CRtest.append(err)
+    # reg = 1
+    # learning rate 0.0001 is too high, 0.00005 is also too high
+    # 0.00003 / 2000 iterations => 0.363 error, -7630 cost
+    # 0.00004 / 1000 iterations => 0.295 error, -7902 cost
+    # 0.00004 / 2000 iterations => 0.321 error, -7528 cost
 
-      W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
-      b += lr*(gradb(Ytrain_ind, p_y) - reg*b)
-      if i % 10 == 0:
-          print("Cost at iteration %d: %.6f" % (i, ll))
-          print("Error rate:", err)
+    # reg = 0.1, still around 0.31 error
+    # reg = 0.01, still around 0.31 error
+    lr = 0.00004
+    reg = 0.01
+    for i in range(500):
+        p_y = forward(Xtrain, W, b)
+        # print "p_y:", p_y
+        ll = cost(p_y, Ytrain_ind)
+        LL.append(ll)
 
-  p_y = forward(Xtest, W, b)
-  print("Final error rate:", error_rate(p_y, Ytest))
-  iters = range(len(LL))
-  plt.plot(iters, LL, iters, LLtest)
-  plt.show()
-  plt.plot(CRtest)
-  plt.show()
+        p_y_test = forward(Xtest, W, b)
+        lltest = cost(p_y_test, Ytest_ind)
+        LLtest.append(lltest)
+
+        err = error_rate(p_y_test, Ytest)
+        CRtest.append(err)
+
+        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
+        b += lr*(gradb(Ytrain_ind, p_y) - reg*b)
+        if i % 10 == 0:
+            print("Cost at iteration %d: %.6f" % (i, ll))
+            print("Error rate:", err)
+
+    p_y = forward(Xtest, W, b)
+    print("Final error rate:", error_rate(p_y, Ytest))
+    iters = range(len(LL))
+    plt.plot(iters, LL, iters, LLtest)
+    plt.show()
+    plt.plot(CRtest)
+    plt.show()
 
 
 def benchmark_pca():
@@ -252,7 +252,8 @@ def benchmark_pca():
     print("Performing logistic regression...")
 
     N, D = Xtrain.shape
-    Ytrain_ind = np.zeros((N, 10))
+    k=Ytrain.astype(np.int32).max()+1
+    Ytrain_ind = np.zeros((N, k))
     for i in range(N):
         Ytrain_ind[i, Ytrain[i]] = 1
 
