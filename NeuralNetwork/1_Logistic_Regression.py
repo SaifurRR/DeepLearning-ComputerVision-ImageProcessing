@@ -1,9 +1,9 @@
 from __future__ import print_function, division
 from builtins import range
-# sudo pip install -U future   
+# sudo pip install -U future
 
-# Note: run this from the current folder it is in.
-    
+# Note: Run this script from the current folder.
+
 import os
 import numpy as np
 import pandas as pd
@@ -11,11 +11,9 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
-
 def get_clouds():
     Nclass = 500
     D = 2
-
     X1 = np.random.randn(Nclass, D) + np.array([0, -2])
     X2 = np.random.randn(Nclass, D) + np.array([2, 2])
     X3 = np.random.randn(Nclass, D) + np.array([-2, 2])
@@ -23,7 +21,6 @@ def get_clouds():
 
     Y = np.array([0]*Nclass + [1]*Nclass + [2]*Nclass)
     return X, Y
-
 
 def get_spiral():
     # Idea: radius -> low...high
@@ -150,40 +147,40 @@ def plot_cumulative_variance(pca):
     plt.show()
     return P
 
-
+#Takes training set -> returns arrays of prob for each sample 'N'
 def forward(X, W, b):
     # softmax
-    a = X.dot(W) + b
+    a = X.dot(W) + b #Linear Tx of 'W' & 'b'
     expa = np.exp(a)
-    y = expa / expa.sum(axis=1, keepdims=True)
+    y = expa / expa.sum(axis=1, keepdims=True) #softmax -> each class is a prob, exp to make all val. pos for prob; calc. for each sample 'N'
     return y
 
-
+#Takes prob(y) -> returns class
 def predict(p_y):
-    return np.argmax(p_y, axis=1)
+    return np.argmax(p_y, axis=1) #predicted class will  have the highest prob.
 
-
+#Takes prob(y) -> returns proportion of misclassified error 
 def error_rate(p_y, t):
-    prediction = predict(p_y)
-    return np.mean(prediction != t)
+    prediction = predict(p_y) #predicted class label (0-9), t: True label
+    return np.mean(prediction != t) #gives proportion of incorrect labels
 
-
+#Takes arrays of prob -> returns cross entropy loss
 def cost(p_y, t):
-    tot = t * np.log(p_y)
-    return -tot.sum()
+    tot = t * np.log(p_y) #element wise matrix multiplication; t: one-hot coded Target; p_y(matrix) : prob of y_train | x_train
+    return -tot.sum() #model will try to reduce this cost adjusting, 'W' & 'B'
 
-
+# Takes 'target label', 'predicted label', & 'training-set' -> returns ΔW
 def gradW(t, y, X):
     return X.T.dot(t - y)
 
-
+# Takes 'target label', 'predicted label' -> returns ΔB
 def gradb(t, y):
     return (t - y).sum(axis=0)
 
-
+#Takes training set -> returns indicator matrix with '1' corresponding to label
 def y2indicator(y):
     N = len(y) # No. of training/ test samples
-    y = y.astype(np.int32) 
+    y = y.astype(np.int32)
     k = y.max()+1
     ind = np.zeros((N, k)) #matrix  of size (#of samples, #of classes)
     for i in range(N):
@@ -193,22 +190,23 @@ def y2indicator(y):
 def benchmark_full():
   #load data
     Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
-
     print("Performing logistic regression...")
     # lr = LogisticRegression(solver='lbfgs')
-
-
     # convert Ytrain and Ytest to (N x K) matrices of indicator variables
     N, D = Xtrain.shape #extract N: #of samples, D: # of features
     Ytrain_ind = y2indicator(Ytrain) #
     Ytest_ind = y2indicator(Ytest)
+    #initialize logistic regression parameters
+    k=10
+    W = np.random.randn(D, k) / np.sqrt(D) # weight matrix of logistic regression -> connecting "features" of i/p vector to "class" of o/p vector;
+                                           # normalization is essential to prevent gradients from vanishing or exploding
+    b = np.zeros(k)
+    #plotting parameters
+    LL = [] #train loss
+    LLtest = [] #test loss
+    CRtest = [] #test classification errors
 
-    W = np.random.randn(D, 10) / np.sqrt(D)
-    b = np.zeros(10)
-    LL = []
-    LLtest = []
-    CRtest = []
-
+    #trial and error: to find good learning rate & regularization penalty
     # reg = 1
     # learning rate 0.0001 is too high, 0.00005 is also too high
     # 0.00003 / 2000 iterations => 0.363 error, -7630 cost
@@ -217,11 +215,13 @@ def benchmark_full():
 
     # reg = 0.1, still around 0.31 error
     # reg = 0.01, still around 0.31 error
-    lr = 0.00004
-    reg = 0.01
-    for i in range(500):
-        p_y = forward(Xtrain, W, b)
-        # print "p_y:", p_y
+
+    # assign initial val for 1st trial
+    lr = 0.00004  #learning rate
+    reg = 0.01    #regularization penalty
+    n_iter=50
+    for i in range(n_iter):
+        p_y = forward(Xtrain, W, b) 
         ll = cost(p_y, Ytrain_ind)
         LL.append(ll)
 
@@ -232,9 +232,10 @@ def benchmark_full():
         err = error_rate(p_y_test, Ytest)
         CRtest.append(err)
 
-        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
-        b += lr*(gradb(Ytrain_ind, p_y) - reg*b)
-        if i % 10 == 0:
+        #gradient ascent -> numerically equivalent to gradient descent
+        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W) #update 'W' based on penalty, and 'regularization' to prevent overfitting        
+        b += lr*(gradb(Ytrain_ind, p_y) - reg*b) #update 'B' based on penalty, and 'regularization' to prevent overfitting  
+        if (i+1) % 10 == 0:
             print("Cost at iteration %d: %.6f" % (i, ll))
             print("Error rate:", err)
 
@@ -245,7 +246,6 @@ def benchmark_full():
     plt.show()
     plt.plot(CRtest)
     plt.show()
-
 
 def benchmark_pca():
     Xtrain, Xtest, Ytrain, Ytest = get_transformed_data()
@@ -264,7 +264,7 @@ def benchmark_pca():
 
     W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
-    LL = []
+    train_losses = []
     LLtest = []
     CRtest = []
 
@@ -274,8 +274,8 @@ def benchmark_pca():
     for i in range(200):
         p_y = forward(Xtrain, W, b)
         # print "p_y:", p_y
-        ll = cost(p_y, Ytrain_ind)
-        LL.append(ll)
+        train_loss = cost(p_y, Ytrain_ind)
+        train_losses.append(train_loss)
 
         p_y_test = forward(Xtest, W, b)
         lltest = cost(p_y_test, Ytest_ind)
@@ -284,20 +284,19 @@ def benchmark_pca():
         err = error_rate(p_y_test, Ytest)
         CRtest.append(err)
 
-        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
-        b += lr*(gradb(Ytrain_ind, p_y) - reg*b)
+        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) + reg*W)
+        b += lr*(gradb(Ytrain_ind, p_y) + reg*b)
         if i % 10 == 0:
-            print("Cost at iteration %d: %.6f" % (i, ll))
+            print("Cost at iteration %d: %.6f" % (i, train_loss))
             print("Error rate:", err)
 
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
-    iters = range(len(LL))
-    plt.plot(iters, LL, iters, LLtest)
+    iters = range(len(train_losses))
+    plt.plot(iters, train_losses, iters, LLtest)
     plt.show()
     plt.plot(CRtest)
     plt.show()
-
 
 if __name__ == '__main__':
     # benchmark_pca()
