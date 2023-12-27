@@ -147,7 +147,7 @@ def plot_cumulative_variance(pca):
     plt.show()
     return P
 
-#Takes training set -> returns arrays of prob for each sample 'N'
+#Takes training set, weight & bias -> returns arrays of prob for each sample 'N'
 def forward(X, W, b):
     # softmax
     a = X.dot(W) + b #Linear Tx of 'W' & 'b'
@@ -159,15 +159,15 @@ def forward(X, W, b):
 def predict(p_y):
     return np.argmax(p_y, axis=1) #predicted class will  have the highest prob.
 
-#Takes prob(y) -> returns proportion of misclassified error 
+#Takes prob(y) & y_test  -> returns proportion of misclassified error
 def error_rate(p_y, t):
     prediction = predict(p_y) #predicted class label (0-9), t: True label
     return np.mean(prediction != t) #gives proportion of incorrect labels
 
-#Takes arrays of prob -> returns cross entropy loss
+#Takes arrays of prob & indicator matrix -> returns cross entropy loss
 def cost(p_y, t):
     tot = t * np.log(p_y) #element wise matrix multiplication; t: one-hot coded Target; p_y(matrix) : prob of y_train | x_train
-    return -tot.sum() #model will try to reduce this cost adjusting, 'W' & 'B'
+    return -tot.sum()/len(t) #model will try to reduce this cost adjusting, 'W' & 'B'
 
 # Takes 'target label', 'predicted label', & 'training-set' -> returns ΔW
 def gradW(t, y, X):
@@ -202,7 +202,7 @@ def benchmark_full():
                                            # normalization is essential to prevent gradients from vanishing or exploding
     b = np.zeros(k)
     #plotting parameters
-    LL = [] #train loss
+    train_losses = [] #train loss
     LLtest = [] #test loss
     CRtest = [] #test classification errors
 
@@ -221,9 +221,9 @@ def benchmark_full():
     reg = 0.01    #regularization penalty
     n_iter=50
     for i in range(n_iter):
-        p_y = forward(Xtrain, W, b) 
+        p_y = forward(Xtrain, W, b)
         ll = cost(p_y, Ytrain_ind)
-        LL.append(ll)
+        train_losses.append(ll)
 
         p_y_test = forward(Xtest, W, b)
         lltest = cost(p_y_test, Ytest_ind)
@@ -233,16 +233,21 @@ def benchmark_full():
         CRtest.append(err)
 
         #gradient ascent -> numerically equivalent to gradient descent
-        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W) #update 'W' based on penalty, and 'regularization' to prevent overfitting        
-        b += lr*(gradb(Ytrain_ind, p_y) - reg*b) #update 'B' based on penalty, and 'regularization' to prevent overfitting  
+        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W) #update 'W' based on penalty, and 'regularization' to prevent overfitting
+        b += lr*(gradb(Ytrain_ind, p_y) - reg*b) #update 'B' based on penalty, and 'regularization' to prevent overfitting
         if (i+1) % 10 == 0:
             print("Cost at iteration %d: %.6f" % (i, ll))
             print("Error rate:", err)
 
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
-    iters = range(len(LL))
-    plt.plot(iters, LL, iters, LLtest)
+    iters = range(len(train_losses))
+    plt.plot(iters, train_losses, label='train loss')
+    plt.plot(iters, LLtest, label='test loss')    
+    plt.title('Benchmark Single Layer NN')
+    plt.legend(loc="upper right")
+    plt.xlabel('# of iteration')
+    plt.ylabel('average loss/sample')
     plt.show()
     plt.plot(CRtest)
     plt.show()
@@ -296,6 +301,7 @@ def benchmark_pca():
     plt.plot(iters, train_losses, iters, LLtest)
     plt.show()
     plt.plot(CRtest)
+    plt.title('Benchmark PCA')
     plt.show()
 
 if __name__ == '__main__':
