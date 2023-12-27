@@ -170,6 +170,7 @@ def cost(p_y, t):
     return -tot.sum()/len(t) #model will try to reduce this cost adjusting, 'W' & 'B'
 
 # Takes 'target label', 'predicted label', & 'training-set' -> returns ΔW
+# Gradient Ascent:
 def gradW(t, y, X):
     return X.T.dot(t - y)
 
