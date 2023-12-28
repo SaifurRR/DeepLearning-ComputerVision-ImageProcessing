@@ -112,7 +112,7 @@ def get_normalized_data():
         exit() #terminate script if file is not present
 
     df = pd.read_csv('/content/large_files/train.csv')
-    data = df.values.astype(np.float32) #data flattened into 1D array
+    data = df.values.astype(np.float32) #data already flattened into 1D array
     np.random.shuffle(data)  #important for train-test-split -> to randomize labels
 
     #split data into i/p & targets
