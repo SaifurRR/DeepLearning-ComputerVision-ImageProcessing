@@ -2,7 +2,7 @@
 # 1) Full gradient descent
 # 2) Stochastic gradient descent
 # 3) Mini-batch gradient descent
-
+  
 from __future__ import print_function, division
 from builtins import range
 # sudo pip install -U future
