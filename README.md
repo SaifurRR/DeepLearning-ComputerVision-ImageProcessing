@@ -11,7 +11,7 @@ Final error rate: 0.08
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/NeuralNetwork/Images/1_Logistic%20Regression_train_test_loss.png)
 
 
-              
+                
   
      
       
