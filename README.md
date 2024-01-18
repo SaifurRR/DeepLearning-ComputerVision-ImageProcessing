@@ -1,7 +1,7 @@
 # DeepLearning-NeuralNet-ComputerVision-ImageProcessing
 
 ### Neural Network:
-#### Digit Recognizer (Kaggle MNIST dataset)
+#### Digit Recognizer (Kaggle MNIST dataset)  
 Dataset: https://www.kaggle.com/c/digit-recognizer
 
 #### 1. Cross Entropy Loss using Logistic Regression for Single-Layer NN as a Benchmark
