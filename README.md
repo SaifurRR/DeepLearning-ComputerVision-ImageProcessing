@@ -1,6 +1,6 @@
 # DeepLearning-NeuralNet-ComputerVision-ImageProcessing
 
-### Neural Network: 
+### Neural Network:   
 #### Digit Recognizer (Kaggle MNIST dataset)  
 Dataset: https://www.kaggle.com/c/digit-recognizer
 
