@@ -22,6 +22,9 @@ Closest point depth (meters): 28.92655372619629
 
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/2_Camera_Trajectory_3D_Visualization.png)         
 
+<p align="center">
  #### Figure. Camera Trajectory(3D Visualization)
+</p>
+
          
         
