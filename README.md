@@ -25,5 +25,9 @@ Closest point depth (meters): 28.92655372619629
 Figure: Camera Trajectory(3D Visualization)
 </p>
 
-         
-        
+#### 3. Environment Perception For Self Driving Cars
+
+![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/3_Estimate_distance_to_impact.jpg)         
+<p align="center">
+Figure: Estimate distance to impact
+</p>        
