@@ -37,3 +37,5 @@ Figure: Estimate distance to impact
 ### Computer Vision (Kaggle):
 #### 1. Convolutional Classifier
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Computer%20Vision%20(Kaggle)/1_binary_crossentropy_loss_accuracy.jpg)
+
+after 30 epochs: val_loss: 0.3322, val_binary_accuracy: 0.8620
