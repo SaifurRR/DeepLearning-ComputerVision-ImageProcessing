@@ -35,4 +35,5 @@ Figure: Estimate distance to impact
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/Mission_Planning_Dijkstras_Astar_search.png)
 
 ### Computer Vision (Kaggle):
+#### 1. Convolutional Classifier
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Computer%20Vision%20(Kaggle)/1_binary_crossentropy_loss_accuracy.jpg)
