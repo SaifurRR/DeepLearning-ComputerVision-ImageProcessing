@@ -12,7 +12,7 @@ Final error rate: $0.08$
 
   
 ### Visual Perception Autonomous Driving:     
-#### 1. Stereo Depth to Driving Scenario
+#### 1. Stereo Depth to Driving Scenario  
     
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/1_Stereo_depth_distance_to_collision.png)  
            Closest point depth (meters):  $28.92655372619629$
