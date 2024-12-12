@@ -17,7 +17,7 @@ Final error rate: $0.08$
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/1_Stereo_depth_distance_to_collision.png)  
            Closest point depth (meters):  $28.92655372619629$
 
-#### 2. Visual Odometry for Localization in Autonomous Driving
+#### 2. Visual Odometry for Localization in Autonomous Driving  
 
 ![ALT TEXT](https://github.com/SaifurRR/DeepLearning-NeuralNet-ComputerVision-ImageProcessing/blob/main/Visual-Perception-Autonomous-Driving/2_Camera_Trajectory_3D_Visualization.png)         
 <p align="center">
