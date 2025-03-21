@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import Adam #optimizer
 #load data and inspect:
 
 # check dataset - stsummary
-dataset=pd.read_csv('life_expectancy.csv')
+dataset=pd.read_csv('3_life_expectancy.csv')
 #print(dataset.head())
 # drop column: axis=1
 dataset=dataset.drop(['Country'], axis=1)
